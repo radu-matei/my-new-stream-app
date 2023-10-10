@@ -15,6 +15,7 @@ route = "/..."
 id = "api"
 source = "api/target/api.wasm"
 ai_models = ["llama2-chat"]
+key_value_stores = ["default"]
 [component.trigger]
 route = "/api/..."
 [component.build]
