@@ -18,6 +18,22 @@ interface History {
   prompts: Prompt[],
 }
 
+router.get("/api/:id", async (req) => {
+  let id = req.params.id;
+  console.log(`Getting history for conversation ID ${id}`);
+  // Getting the conversation history from the KV store for a given ID.
+  try {
+    let kv = Kv.openDefault();
+    if (kv.exists(id)) {
+      return { status: 200, body: kv.get(id) };
+    } else {
+      return { status: 404, body: "Not Found" };
+    }
+  } catch {
+    return error();
+  }
+});
+
 router.post("/api/generate", async (_req, extra) => {
   try {
     let p = JSON.parse(decoder.decode(extra.body)) as Prompt;
@@ -32,9 +48,11 @@ router.post("/api/generate", async (_req, extra) => {
       chat = JSON.parse(decoder.decode(kv.get(p.id)));
     } else {
       chat = { id: p.id, prompts: [] };
+      chat.prompts.push(systemPrompt);
     }
+    chat.prompts.push(p);
 
-    let res = Llm.infer(InferencingModels.Llama2Chat, p.content, { maxTokens: 50 });
+    let res = Llm.infer(InferencingModels.Llama2Chat, buildLlama2Prompt(chat.prompts), { maxTokens: 50 });
     console.log(res);
 
     // Append the new message to the history and save it to KV before sending it back.
@@ -72,6 +90,10 @@ export function buildLlama2Prompt(
 
   return startPrompt + conversation.join('') + endPrompt
 }
+
+let systemPrompt: Prompt = {
+  role: "System", id: "", content: `You are an assistant. Be as concise as possible. Avoid using emojis in responses.`
+};
 
 // Function to generate a generic error message.
 function error(): HttpResponse {

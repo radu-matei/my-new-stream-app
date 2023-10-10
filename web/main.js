@@ -11,6 +11,7 @@ let conversationId = getOrSetConversationId();
 	let history = await fetch(`/api/${conversationId}`);
 	console.log(`Fetching conversation ID: ${conversationId}`);
 	if (history.ok) {
+		console.log("ok");
 		let chat = await history.json();
 		if (chat) {
 			chat.prompts.forEach(c => {
@@ -111,7 +112,7 @@ clearButton.addEventListener('click', async () => {
 	conversationId = getOrSetConversationId();
 	notify("Clearing history and starting new conversation.");
 	chatHistory.innerHTML = '';
-	// await fetch(`/api/${conversationId}`, { method: "DELETE" });
+	await fetch(`/api/${conversationId}`, { method: "DELETE" });
 });
 
 function uuidv4() {
