@@ -31,3 +31,16 @@ key_value_stores = ["default"]
 environment = { SPIN_APP_KV_SKIP_AUTH = "1" }
 [component.trigger]
 route = "/internal/kv-explorer/..."
+
+[[component]]
+id = "summary"
+source = "summary/target/wasm32-wasi/release/summary.wasm"
+allowed_http_hosts = []
+ai_models = ["llama2-chat"]
+key_value_stores = ["default"]
+[component.trigger]
+route = "/api/summary/..."
+[component.build]
+command = "cargo build --target wasm32-wasi --release"
+workdir = "summary"
+watch = ["src/**/*.rs", "Cargo.toml"]
