@@ -30,7 +30,7 @@ struct Summary {
 #[http_component]
 fn handle_summary(req: Request) -> Result<Response> {
     let mut router = Router::new();
-    router.get("/api/summary/:id", generate_summary);
+    router.post("/api/summary/:id", generate_summary);
 
     router.handle(req)
 }

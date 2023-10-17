@@ -105,6 +105,8 @@ function sanitizeOutput(text: string): string {
     "</s><s>",
     "</s><",
     "</s>",
+    "</s",
+    "</",
   ];
 
   for (const term of terminations) {
